@@ -11,26 +11,26 @@ namespace tools {
         Delta() : nanoseconds(0) {}
         explicit Delta(double ns) : nanoseconds(ns) {}
 
-        [[nodiscard]] double getNanoseconds() const { return nanoseconds; }
-        [[nodiscard]] double getMicroseconds() const { return nanoseconds / 1e3; }
-        [[nodiscard]] double getMilliseconds() const { return nanoseconds / 1e6; }
-        [[nodiscard]] double getSeconds() const { return nanoseconds / 1e9; }
-        [[nodiscard]] double getMinutes() const { return getSeconds() / 60; }
-        [[nodiscard]] double getHours() const { return getMinutes() / 60; }
-        [[nodiscard]] double getDays() const { return getHours() / 24; }
-        [[nodiscard]] double getYears() const { return getDays() / 365; }
+        [[nodiscard]] double toNanoseconds() const { return nanoseconds; }
+        [[nodiscard]] double toMicroseconds() const { return nanoseconds / 1e3; }
+        [[nodiscard]] double toMilliseconds() const { return nanoseconds / 1e6; }
+        [[nodiscard]] double toSeconds() const { return nanoseconds / 1e9; }
+        [[nodiscard]] double toMinutes() const { return toSeconds() / 60; }
+        [[nodiscard]] double toHours() const { return toMinutes() / 60; }
+        [[nodiscard]] double toDays() const { return toHours() / 24; }
+        [[nodiscard]] double toYears() const { return toDays() / 365; }
 
         [[nodiscard]] std::string toString() const {
             std::ostringstream oss;
             oss << "Delta {\n"
-                << "    nanoseconds = " << getNanoseconds() << "\n"
-                << "    microseconds = " << getMicroseconds() << "\n"
-                << "    milliseconds = " << getMilliseconds() << "\n"
-                << "    seconds = " << getSeconds() << "\n"
-                << "    minutes = " << getMinutes() << "\n"
-                << "    hours = " << getHours() << "\n"
-                << "    days = " << getDays() << "\n"
-                << "    years = " << getYears() << "\n"
+                << "    nanoseconds = " << toNanoseconds() << "\n"
+                << "    microseconds = " << toMicroseconds() << "\n"
+                << "    milliseconds = " << toMilliseconds() << "\n"
+                << "    seconds = " << toSeconds() << "\n"
+                << "    minutes = " << toMinutes() << "\n"
+                << "    hours = " << toHours() << "\n"
+                << "    days = " << toDays() << "\n"
+                << "    years = " << toYears() << "\n"
                 << "}";
             return oss.str();
         }
