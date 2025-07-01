@@ -11,26 +11,26 @@ namespace tools {
         Delta() : nanoseconds(0) {}
         explicit Delta(double ns) : nanoseconds(ns) {}
 
-        [[nodiscard]] double toNanoseconds() const { return nanoseconds; }
-        [[nodiscard]] double toMicroseconds() const { return nanoseconds / 1e3; }
-        [[nodiscard]] double toMilliseconds() const { return nanoseconds / 1e6; }
-        [[nodiscard]] double toSeconds() const { return nanoseconds / 1e9; }
-        [[nodiscard]] double toMinutes() const { return toSeconds() / 60; }
-        [[nodiscard]] double toHours() const { return toMinutes() / 60; }
-        [[nodiscard]] double toDays() const { return toHours() / 24; }
-        [[nodiscard]] double toYears() const { return toDays() / 365; }
+        [[nodiscard]] double ToNanoseconds() const { return nanoseconds; }
+        [[nodiscard]] double ToMicroseconds() const { return nanoseconds / 1e3; }
+        [[nodiscard]] double ToMilliseconds() const { return nanoseconds / 1e6; }
+        [[nodiscard]] double ToSeconds() const { return nanoseconds / 1e9; }
+        [[nodiscard]] double ToMinutes() const { return ToSeconds() / 60; }
+        [[nodiscard]] double ToHours() const { return ToMinutes() / 60; }
+        [[nodiscard]] double ToDays() const { return ToHours() / 24; }
+        [[nodiscard]] double ToYears() const { return ToDays() / 365; }
 
-        [[nodiscard]] std::string toString() const {
+        [[nodiscard]] std::string ToString() const {
             std::ostringstream oss;
             oss << "Delta {\n"
-                << "    nanoseconds = " << toNanoseconds() << "\n"
-                << "    microseconds = " << toMicroseconds() << "\n"
-                << "    milliseconds = " << toMilliseconds() << "\n"
-                << "    seconds = " << toSeconds() << "\n"
-                << "    minutes = " << toMinutes() << "\n"
-                << "    hours = " << toHours() << "\n"
-                << "    days = " << toDays() << "\n"
-                << "    years = " << toYears() << "\n"
+                << "    nanoseconds = " << ToNanoseconds() << "\n"
+                << "    microseconds = " << ToMicroseconds() << "\n"
+                << "    milliseconds = " << ToMilliseconds() << "\n"
+                << "    seconds = " << ToSeconds() << "\n"
+                << "    minutes = " << ToMinutes() << "\n"
+                << "    hours = " << ToHours() << "\n"
+                << "    days = " << ToDays() << "\n"
+                << "    years = " << ToYears() << "\n"
                 << "}";
             return oss.str();
         }
@@ -58,11 +58,11 @@ namespace tools {
     class Timer {
         std::chrono::high_resolution_clock::time_point _start;
     public:
-        void start() {
+        void Start() {
             _start = std::chrono::high_resolution_clock::now();
         }
 
-        Delta getDelta() {
+        Delta GetDelta() {
             Delta delta(static_cast<double>((std::chrono::high_resolution_clock::now() - _start).count()));
             return delta;
         }

@@ -8,7 +8,7 @@
 
 
 namespace tools {
-    void parseMatrix(const std::string& path, std::vector<std::vector<int>>& mtx) {
+    void ParseMatrix(const std::string& path, std::vector<std::vector<int>>& mtx) {
         std::ifstream inFile;
         inFile.open(path);
         if (inFile.fail()) {
@@ -35,7 +35,7 @@ namespace tools {
         }
     }
 
-    void printMatrix(const std::vector<std::vector<int>>& mtx) {
+    void PrintMatrix(const std::vector<std::vector<int>>& mtx) {
         for (const std::vector<int>& mtxRow : mtx) {
             for (const int num : mtxRow) {
                 printf("| %2d ", num);
