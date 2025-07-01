@@ -1,5 +1,5 @@
 add_executable(
-    AssignmentProblem
+    Permutations
         main.cpp
 )
 include_directories(../../../tools)
