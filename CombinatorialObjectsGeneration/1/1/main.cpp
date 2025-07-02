@@ -2,7 +2,7 @@
 #include "timer.h"
 #include "print.h"
 #include "matrix.h"
-#include "Narayana.h"
+#include "Permutations.h"
 
 #include <limits>
 
@@ -12,7 +12,7 @@ int main(int argc, char *argv[]) {
 	timer.Start();
 	do {
 		// tools::PrintArray(array);
-	} while (Narayana::NextPermutation(array));
+	} while (Permutations::Next(array));
 	auto time = timer.GetDelta();
 	std::cout << "Time for N = " << array.size() << ": " << time.ToSeconds() << "s" << std::endl;
 //	for (int i = array.size(); i <= 15; i++) {
