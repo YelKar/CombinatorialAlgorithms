@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <stdexcept>
 #include <limits>
+#include "Permutations.h"
 
 int GetPathLength(std::vector<std::vector<int>> distanceMtx, const std::vector<int>& path) {
 	int length = 0;
@@ -29,7 +30,7 @@ int FindShortestPath(std::vector<std::vector<int>> distanceMtx, std::vector<int>
 			minLength = length;
 			maxPath = tempPath;
 		}
-	} while (std::next_permutation(tempPath.begin(), tempPath.end()));
+	} while (Permutations::Next(tempPath));
 	path = maxPath;
 	return minLength;
 }

@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
 		std::cerr << "Usage: " << argv[0] << " <count of cities> <volume matrix file>" << std::endl;
 		return 1;
 	} else {
-		countOfPoints = atoi(argv[1]);
+		countOfPoints = std::stoi(argv[1]);
 		tools::ParseMatrix(argv[2], distanceMtx);
 	}
 	if (distanceMtx.size() < countOfPoints) {
@@ -34,11 +34,13 @@ int main(int argc, char *argv[]) {
 	for (int i = 0; i < countOfPoints; i++) {
 		path.push_back(i);
 	}
+	timer.Start();
 	int length = FindShortestPath(distanceMtx, path);
+	auto time = timer.GetDelta();
 	std::cout << "Path length: " << length << std::endl;
 	std::cout << "path: ";
 	tools::PrintArray(path);
-	std::cout << std::endl;
+	std::cout << "Time: " << time.ToSeconds() << "s" << std::endl;
 	return 0;
 }
 

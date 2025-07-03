@@ -3,4 +3,4 @@ add_executable(
         main.cpp
 )
 
-include_directories(../../../tools)
+include_directories(../../../tools ../1)
