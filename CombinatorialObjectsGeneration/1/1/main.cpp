@@ -8,10 +8,10 @@
 
 int main(int argc, char *argv[]) {
     tools::Timer timer;
-	std::vector<int> array = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13};
+	std::vector<int> array = Permutations::First(13);
 	timer.Start();
 	do {
-		// tools::PrintArray(array);
+//		tools::PrintArray(array);
 	} while (Permutations::Next(array));
 	auto time = timer.GetDelta();
 	std::cout << "Time for N = " << array.size() << ": " << time.ToSeconds() << "s" << std::endl;

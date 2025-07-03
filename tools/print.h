@@ -6,28 +6,28 @@
 namespace tools {
 
 template <typename T>
-std::stringstream RenderArray(std::vector<T> arr) {
+std::stringstream RenderArray(std::vector<T> arr, std::string sep = " ") {
     std::stringstream out;
     for (T a : arr) {
-        out << a << " ";
+        out << a << sep;
     }
     return out;
 }
 template <typename T>
-std::stringstream RenderArray(T* arr, std::size_t size) {
+std::stringstream RenderArray(T* arr, std::size_t size, std::string sep = " ") {
 	std::stringstream out;
 	for (std::size_t i = 0; i < size; i++) {
-		out << arr[i] << " ";
+		out << arr[i] << sep;
 	}
 	return out;
 }
 template <typename T>
-void PrintArray(std::vector<T> arr) {
-	std::cout << RenderArray(arr).str() << std::endl;
+void PrintArray(std::vector<T> arr, std::string sep = " ", std::string end = "\n") {
+	std::cout << RenderArray(arr, sep).str() << end;
 }
 template <typename T>
-void PrintArray(T* arr, std::size_t size) {
-	std::cout << RenderArray(arr, size).str() << std::endl;
+void PrintArray(T* arr, std::size_t size, std::string sep = " ", std::string end = "\n") {
+	std::cout << RenderArray(arr, size, sep).str() << end;
 }
 
 namespace ArrayStreams {

@@ -1,13 +1,21 @@
 #include <vector>
 #include <numeric>
 #include "print.h"
-#include "Combinations.h"
+#include "PermutationWithRepetition.h"
 
+
+void PrintAllPermutations(int n, int k) {
+	auto array = PermutationWithRepetition::First(n, k);
+	do {
+		tools::PrintArray(array, "", " -> ");
+	} while (PermutationWithRepetition::Next(array, n));
+	tools::PrintArray(array, "");
+}
 
 int main(int argc, char** argv) {
-	auto array = Combinations::First(5, 3);
-	do {
-		tools::PrintArray(array);
-	} while (Combinations::Next(array, 5));
+	PrintAllPermutations(3, 2);
+	PrintAllPermutations(2, 3);
+	PrintAllPermutations(2, 1);
+	PrintAllPermutations(15, 1);
 	return 0;
 }

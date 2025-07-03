@@ -1,5 +1,5 @@
 add_executable(
-    Combinations
+    PermutationsWithRepetition
         main.cpp
 )
 

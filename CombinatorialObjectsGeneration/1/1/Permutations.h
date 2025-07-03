@@ -2,9 +2,16 @@
 
 #include <vector>
 #include <algorithm>
+#include <numeric>
 
 namespace Permutations
 {
+	std::vector<int> First(int n)
+	{
+		std::vector<int> result(n);
+		std::iota(result.begin(), result.end(), 1);
+		return result;
+	}
 
 	bool Next(int *array, std::size_t size)
 	{
