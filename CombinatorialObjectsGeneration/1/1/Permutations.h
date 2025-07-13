@@ -8,6 +8,10 @@ namespace Permutations
 {
 	std::vector<int> First(int n)
 	{
+		if (n == 0) {
+			throw std::invalid_argument("Permutation must have positive length");
+		}
+
 		std::vector<int> result(n);
 		std::iota(result.begin(), result.end(), 1);
 		return result;
@@ -15,6 +19,9 @@ namespace Permutations
 
 	bool Next(int *array, std::size_t size)
 	{
+		if (size == 0) {
+			throw std::invalid_argument("Permutation must have positive length");
+		}
 		std::size_t i = size - 1;
 		for (; i > 0 && array[i - 1] >= array[i]; i--);
 		if (i == 0)
@@ -32,5 +39,4 @@ namespace Permutations
 	{
 		return Next(array.data(), array.size());
 	}
-
 }
