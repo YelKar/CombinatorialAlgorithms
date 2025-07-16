@@ -20,6 +20,7 @@ namespace Knapsack
 	{
 		const int capacity;
 		int value;
+		int weight;
 		std::vector<Thing> things;
 	};
 
@@ -45,6 +46,7 @@ namespace Knapsack
 		std::vector<bool> array(things.size(), false);
 		std::vector<bool> bestThingsIndicator;
 		int maxValue = 0;
+		int weightOfMaxValue = 0;
 		do
 		{
 			int weight = 0;
@@ -61,11 +63,13 @@ namespace Knapsack
 			if (weight <= knapsack.capacity && value > maxValue)
 			{
 				maxValue = value;
+				weightOfMaxValue = weight;
 				bestThingsIndicator = array;
 			}
 		} while (NextOccurrence(array));
 
 		knapsack.value = maxValue;
+		knapsack.weight = weightOfMaxValue;
 		knapsack.things.clear();
 		for (int i = 0; i < bestThingsIndicator.size(); ++i)
 		{
@@ -75,5 +79,4 @@ namespace Knapsack
 			}
 		}
 	}
-
 }
