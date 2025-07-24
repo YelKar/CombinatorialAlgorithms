@@ -1,50 +1,27 @@
-#include <vector>
-#include "print.h"
-#include "timer.h"
-#include "matrix.h"
+#include <iostream>
 #include "GraphColoring.h"
 
+int main() {
+	Graph faces = {
+		{{0, 1}, {1, 2}, {2, 0}},
+		{{0, 2}, {2, 3}, {3, 0}},
+		{{0, 3}, {3, 4}, {4, 0}},
+		{{0, 4}, {4, 5}, {5, 0}},
+		{{0, 5}, {5, 1}, {1, 0}},
+		{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {5, 1}},
+	};
 
-bool ProcessArgs(int argc, char **argv, int &countOfPoints, std::vector<std::vector<int>> &adjacencyMtx);
+	DualGraph dual = BuildDualGraph(faces);
 
-int main(int argc, char** argv) {
-	int countOfPoints = 0;
-	std::vector<std::vector<int>> adjacencyMtx;
-
-	if (!ProcessArgs(argc, argv, countOfPoints, adjacencyMtx)) {
-		return 1;
+	std::vector<int> coloring;
+	if (GraphColoring(dual, coloring)) {
+		std::cout << "Минимальная раскраска: " << std::endl;
+		for (int i = 0; i < coloring.size(); ++i) {
+			std::cout << "Грань " << i << " → Цвет " << coloring[i] << std::endl;
+		}
+	} else {
+		std::cout << "Не удалось раскрасить граф" << std::endl;
 	}
-
-	std::cout << "Adjacency Matrix:" << std::endl;
-	tools::PrintMatrix(adjacencyMtx);
-	std::vector<int> colors;
-	auto time = tools::Timer::Measure([&colors, &adjacencyMtx] {
-		colors = ColorGraph(adjacencyMtx);
-	});
-	std::cout << "Colors (" << *std::max_element(colors.begin(), colors.end()) + 1 << "):" << std::endl;
-	tools::PrintArray(colors);
-	std::cout << "Time: " << time.ToSeconds() << "s" << std::endl;
 
 	return 0;
 }
-
-bool ProcessArgs(int argc, char **argv, int &countOfPoints, std::vector<std::vector<int>> &adjacencyMtx) {
-	if (argc != 3) {
-		std::cerr << "Usage: " << argv[0] << " <count of vertexes> <matrix file>" << std::endl;
-		return false;
-	} else {
-		countOfPoints = std::stoi(argv[1]);
-		tools::ParseMatrix(argv[2], adjacencyMtx);
-	}
-	if (adjacencyMtx.size() < countOfPoints) {
-		std::cerr << "Error: distanceMtx must have " << countOfPoints << " rows or more" << std::endl;
-		return false;
-	}
-
-	adjacencyMtx.resize(countOfPoints);
-	for (int i = 0; i < countOfPoints; i++) {
-		adjacencyMtx[i].resize(countOfPoints);
-	}
-	return true;
-}
-

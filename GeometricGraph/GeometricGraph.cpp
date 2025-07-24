@@ -3,6 +3,9 @@
 #include "limits"
 #include <stack>
 #include <iostream>
+#include <cmath>
+#include <numeric>
+#include <ranges>
 
 
 GeometricGraph::GeometricGraph() = default;
@@ -18,15 +21,17 @@ void GeometricGraph::AddVertex(int x, int y, const std::set<int>& neighbors)
 void GeometricGraph::AddVertex(const Vertex& vertex)
 {
 	vertices.push_back(vertex);
-	for (int neighbour : vertex.neighbors) {
-		if (vertices.size() > neighbour)
-		{
-			vertices[neighbour].neighbors.insert(vertices.size() - 1);
-		}
-	}
 }
 
 GeometricGraph::Vertex& GeometricGraph::GetVertex(std::size_t index)
+{
+	if (index >= vertices.size()) {
+		throw std::out_of_range("GeometricGraph::GetVertex");
+	}
+	return vertices[index];
+}
+
+const GeometricGraph::Vertex &GeometricGraph::GetVertex(std::size_t index) const
 {
 	if (index >= vertices.size()) {
 		throw std::out_of_range("GeometricGraph::GetVertex");
@@ -132,15 +137,72 @@ std::set<int> GeometricGraph::ArticulationPoints() const
 	return ProcessSearchTree(root, in, up);
 }
 
-void GeometricGraph::Validate()
+void GeometricGraph::Validate() const
 {
 	for (int vertex = 0; vertex < vertices.size(); vertex++) {
 		for (int neighbour : vertices[vertex].neighbors) {
-			if (neighbour < vertices.size()) {
-				vertices[neighbour].neighbors.insert(vertex);
-			} else {
+			if (neighbour >= vertices.size()) {
 				throw std::runtime_error("Vertex " + std::to_string(neighbour) + " out of range");
 			}
 		}
 	}
+}
+
+bool GeometricGraph::HasEdge(int v1, int v2) const
+{
+	return GetVertex(v1).neighbors.contains(v2);
+}
+
+double GeometricGraph::GetLength(int v1, int v2) const
+{
+	auto
+	    vertex1 = GetVertex(v1),
+	    vertex2 = GetVertex(v2);
+	if (HasEdge(v1, v2)) {
+		return std::hypot(vertex1.x - vertex2.x, vertex1.y - vertex2.y);
+	}
+	throw std::invalid_argument(std::format("Vertices {} and {} are not neighbors", v1, v2));
+}
+
+GeometricGraph::AdjacencyMatrix GeometricGraph::GetAdjacencyMatrix() const
+{
+	std::vector<std::vector<double>> matrix(vertices.size());
+	for (int row = 0; row < vertices.size(); ++row) {
+		matrix[row].resize(vertices.size(), std::numeric_limits<double>::max());
+		for (int vertex = 0; vertex < vertices.size(); ++vertex) {
+			if (HasEdge(row, vertex)) {
+				matrix[row][vertex] = GetLength(row, vertex);
+			}
+		}
+	}
+	return matrix;
+}
+
+#include "HamiltonianCycle.cpp"
+
+std::vector<int> GeometricGraph::HamiltonianCycle(int startAt) const
+{
+	auto adjacencyMatrix = GetAdjacencyMatrix();
+	auto minRowsElements = FindMinRowsElements(adjacencyMatrix);
+	for (auto [row, minElement] : std::views::zip(adjacencyMatrix, minRowsElements)) {
+		for (auto &element : row) {
+			element -= minElement;
+		}
+	}
+	auto minColumnsElements = FindMinColumnsElements(adjacencyMatrix);
+	for (auto [columnNum, minElement] : std::views::zip(std::views::iota(0ul, adjacencyMatrix.size()), minColumnsElements)) {
+		for (auto &row : adjacencyMatrix) {
+			row[columnNum] -= minElement;
+		}
+	}
+
+	double bottomLimit =
+		+ Sum(minRowsElements)
+		+ Sum(minColumnsElements);
+
+	auto penaltyMatrix = GetPenaltyMatrix(adjacencyMatrix, minRowsElements, minColumnsElements);
+	auto maxPenalty = MaxOfMatrix(penaltyMatrix);
+	
+
+	return {};
 }
