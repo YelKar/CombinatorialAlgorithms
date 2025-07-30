@@ -8,6 +8,7 @@ public:
 	struct Vertex;
 	using AdjacencyMatrixRow = std::vector<double>;
 	using AdjacencyMatrix = std::vector<AdjacencyMatrixRow>;
+	using Edge = std::pair<int, int>;
 	GeometricGraph();
 	explicit GeometricGraph(const std::vector<Vertex>& vertices);
 	GeometricGraph(const GeometricGraph& other);
@@ -22,7 +23,8 @@ public:
 	[[nodiscard]] bool HasEdge(int v1, int v2) const;
 	[[nodiscard]] double GetLength(int v1, int v2) const;
 	[[nodiscard]] std::vector<std::vector<double>> GetAdjacencyMatrix() const;
-	[[nodiscard]] std::vector<int> HamiltonianCycle(int startAt = 0) const;
+	[[nodiscard]] std::vector<Edge> HamiltonianCycle() const;
+	static std::vector<Edge> HamiltonianCycle(const AdjacencyMatrix&);
 private:
     std::vector<Vertex> vertices;
 };
@@ -31,3 +33,5 @@ struct GeometricGraph::Vertex {
 	int x, y;
 	std::set<int> neighbors;
 };
+
+std::ostream& operator<<(std::ostream&, const GeometricGraph::Edge&);

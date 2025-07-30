@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/CombinationsTesting.dir/link.d CMakeFiles/CombinationsTesting.dir/Testing.cpp.o -o CombinationsTesting  ../../../lib/libgtest_main.a ../../../lib/libgtest.a

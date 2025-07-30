@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/GraphColoring.dir/link.d CMakeFiles/GraphColoring.dir/main.cpp.o -o GraphColoring

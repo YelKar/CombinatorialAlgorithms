@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/Practice2025.dir/link.d CMakeFiles/Practice2025.dir/main.cpp.o -o Practice2025

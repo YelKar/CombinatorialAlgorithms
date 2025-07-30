@@ -1,0 +1,18 @@
+{
+	"InstallScripts" : 
+	[
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/1/1/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/_deps/googletest-build/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/_deps/googletest-build/googlemock/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/_deps/googletest-build/googletest/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/1/2/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/2/1/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/2/2/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/3/1/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/CombinatorialObjectsGeneration/3/2/cmake_install.cmake",
+		"/home/yel/Projects/CPP/CombinatorialAlgorithms/build/GeometricGraph/cmake_install.cmake"
+	],
+	"Parallel" : false
+}

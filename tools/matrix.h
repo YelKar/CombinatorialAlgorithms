@@ -5,10 +5,14 @@
 #include <fstream>
 #include <iostream>
 #include <cstring>
+#include <ranges>
+#include <algorithm>
+#include "print.h"
 
 
 namespace tools {
-    void ParseMatrix(const std::string& path, std::vector<std::vector<int>>& mtx) {
+    template<typename T>
+    void ParseMatrix(const std::string& path, std::vector<std::vector<T>>& mtx) {
         std::ifstream inFile;
         inFile.open(path);
         if (inFile.fail()) {
@@ -18,7 +22,7 @@ namespace tools {
         mtx.clear();
         std::string line;
         for (;!inFile.eof();) {
-            std::vector<int> mtxRow;
+            std::vector<T> mtxRow;
             std::getline(inFile, line);
             std::string num;
             for (char c : line) {
@@ -35,12 +39,13 @@ namespace tools {
         }
     }
 
-    void PrintMatrix(const std::vector<std::vector<int>>& mtx) {
-        for (const std::vector<int>& mtxRow : mtx) {
-            for (const int num : mtxRow) {
-                printf("| %2d ", num);
-            }
-            std::cout << "|" << std::endl;
+    template<typename T>
+    void PrintMatrix(const std::vector<std::vector<T>>& mtx) {
+        if (mtx.empty() || mtx[0].empty()) {
+            return;
+        }
+        for (const std::vector<T>& mtxRow : mtx) {
+            std::cout << "| " << RenderArray(mtxRow, " | ").str() << "|\n";
         }
     }
 }

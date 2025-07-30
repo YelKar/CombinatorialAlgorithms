@@ -180,29 +180,26 @@ GeometricGraph::AdjacencyMatrix GeometricGraph::GetAdjacencyMatrix() const
 
 #include "HamiltonianCycle.cpp"
 
-std::vector<int> GeometricGraph::HamiltonianCycle(int startAt) const
+std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle() const
 {
 	auto adjacencyMatrix = GetAdjacencyMatrix();
-	auto minRowsElements = FindMinRowsElements(adjacencyMatrix);
-	for (auto [row, minElement] : std::views::zip(adjacencyMatrix, minRowsElements)) {
-		for (auto &element : row) {
-			element -= minElement;
-		}
-	}
-	auto minColumnsElements = FindMinColumnsElements(adjacencyMatrix);
-	for (auto [columnNum, minElement] : std::views::zip(std::views::iota(0ul, adjacencyMatrix.size()), minColumnsElements)) {
-		for (auto &row : adjacencyMatrix) {
-			row[columnNum] -= minElement;
-		}
-	}
+	double record = std::numeric_limits<double>::max();
+	std::vector<Edge> path(adjacencyMatrix.size());
+	std::vector<Edge> bestPath(adjacencyMatrix.size());
+	FindHamiltonianCycle(adjacencyMatrix, path, bestPath, record);
+	return bestPath;
+}
 
-	double bottomLimit =
-		+ Sum(minRowsElements)
-		+ Sum(minColumnsElements);
+std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix)
+{
+	double record = std::numeric_limits<double>::max();
+	std::vector<Edge> path;
+	std::vector<Edge> bestPath;
+	FindHamiltonianCycle(adjacencyMatrix, path, bestPath, record);
+	return bestPath;
+}
 
-	auto penaltyMatrix = GetPenaltyMatrix(adjacencyMatrix, minRowsElements, minColumnsElements);
-	auto maxPenalty = MaxOfMatrix(penaltyMatrix);
-	
 
-	return {};
+std::ostream& operator<<(std::ostream& os, const GeometricGraph::Edge& edge) {
+	return os << "[" << edge.first << ";" << edge.second << "]";
 }

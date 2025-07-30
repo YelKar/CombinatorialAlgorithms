@@ -1,0 +1,1 @@
+/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/GeometricGraph.dir/link.d CMakeFiles/GeometricGraph.dir/main.cpp.o CMakeFiles/GeometricGraph.dir/GeometricGraph.cpp.o -o GeometricGraph
