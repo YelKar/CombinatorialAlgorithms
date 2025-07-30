@@ -20,11 +20,11 @@ int main(int argc, char **argv) {
 	// }
 	// tools::PrintArray(graph.HamiltonianCycle());
 	const double inf = std::numeric_limits<double>::max();
-	GeometricGraph::AdjacencyMatrix mtx{
-				{inf, 1, 2},
-				{1, inf, 3},
-				{2, 3, inf}
-	};
+	// GeometricGraph::AdjacencyMatrix mtx{
+	// 			{inf, 1, 2},
+	// 			{1, inf, 3},
+	// 			{2, 3, inf}
+	// };
 	GeometricGraph::AdjacencyMatrix mtx{
 				{inf, 8, 1, inf, 3, inf},
 				{8, inf, 6, 5, inf, inf},
