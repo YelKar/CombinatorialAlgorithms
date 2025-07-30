@@ -182,12 +182,7 @@ GeometricGraph::AdjacencyMatrix GeometricGraph::GetAdjacencyMatrix() const
 
 std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle() const
 {
-	auto adjacencyMatrix = GetAdjacencyMatrix();
-	double record = std::numeric_limits<double>::max();
-	std::vector<Edge> path(adjacencyMatrix.size());
-	std::vector<Edge> bestPath(adjacencyMatrix.size());
-	FindHamiltonianCycle(adjacencyMatrix, path, bestPath, record);
-	return bestPath;
+	return HamiltonianCycle(GetAdjacencyMatrix());;
 }
 
 std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix)
@@ -196,7 +191,7 @@ std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle(const Geometr
 	std::vector<Edge> path;
 	std::vector<Edge> bestPath;
 	FindHamiltonianCycle(adjacencyMatrix, path, bestPath, record);
-	return bestPath;
+	return GetOriginalCoordinates(adjacencyMatrix.size(), bestPath);
 }
 
 

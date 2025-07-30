@@ -5,14 +5,15 @@
 #include "matrix.h"
 
 
-auto FindMinRowsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
-	return adjacencyMatrix | std::views::transform([] (const GeometricGraph::AdjacencyMatrixRow row) {
+std::vector<double> FindMinRowsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
+	auto container = adjacencyMatrix | std::views::transform([] (const GeometricGraph::AdjacencyMatrixRow row) {
 		return std::ranges::min(row);
 	});
+	return std::vector(std::begin(container), std::end(container));
 }
 
-auto FindMinColumnsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
-	return std::views::iota(0ul, adjacencyMatrix.size()) | std::views::transform([adjacencyMatrix] (int columnNum) {
+std::vector<double> FindMinColumnsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
+	auto container = std::views::iota(0ul, adjacencyMatrix.size()) | std::views::transform([adjacencyMatrix] (int columnNum) {
 		return std::ranges::min(
 			adjacencyMatrix
 			| std::views::transform([columnNum] (const GeometricGraph::AdjacencyMatrixRow& row) {
@@ -20,6 +21,7 @@ auto FindMinColumnsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatr
 			})
 		);
 	});
+	return std::vector(std::begin(container), std::end(container));
 }
 
 template <typename Container>
@@ -106,13 +108,21 @@ void FindHamiltonianCycle(
 	double bottomLimit = 0
 )
 {
-	if (++a >= 20) {
+	std::cout << "------------------------>" << std::endl;
+	std::cout << "GOT:" << std::endl;
+	tools::PrintMatrix(adjacencyMatrix);
+	if (++a >= 200) {
 		return;
 	}
+	std::cout << "BottomLimit: " << bottomLimit << std::endl;
+	std::cout << "\\/\\/\\/\\/\\/\\/" << std::endl;
 	if (adjacencyMatrix.size() < 2) {
 		if (!adjacencyMatrix.empty() && !adjacencyMatrix[0].empty() && bottomLimit < record) {
 			record = bottomLimit;
 			bestPath = path;
+			std::cout << "New record: " << record << std::endl;
+			std::cout << "New path: " << std::endl;
+			tools::PrintArray(bestPath);
 		}
 		return;
 	}
@@ -123,6 +133,10 @@ void FindHamiltonianCycle(
 				element -= minElement;
 		}
 	}
+	std::cout << "RowSubtracted:" << std::endl;
+	tools::PrintMatrix(adjacencyMatrix);
+	std::cout << "MinRowsElements:" << std::endl;
+	tools::PrintArray(minRowsElements);
 	auto minColumnsElements = FindMinColumnsElements(adjacencyMatrix);
 	for (auto [columnNum, minElement] : std::views::zip(std::views::iota(0ul, adjacencyMatrix.size()), minColumnsElements)) {
 		for (auto &row : adjacencyMatrix) {
@@ -131,9 +145,15 @@ void FindHamiltonianCycle(
 		}
 	}
 
+	std::cout << "ColSubtracted:" << std::endl;
+	tools::PrintMatrix(adjacencyMatrix);
+	std::cout << "MinColumnsElements:" << std::endl;
+	tools::PrintArray(minColumnsElements);
+
 	bottomLimit +=
 		+ Sum(minRowsElements)
 		+ Sum(minColumnsElements);
+	std::cout << "BottomLimit: " << bottomLimit << std::endl;
 	
 	if (bottomLimit > record) {
 		return;
@@ -141,15 +161,53 @@ void FindHamiltonianCycle(
 
 	auto penaltyMatrix = GetPenaltyMatrix(adjacencyMatrix, minRowsElements, minColumnsElements);
 	auto maxPenalty = MaxOfMatrix(penaltyMatrix);
+	std::cout << "PenaltyMatrix:" << std::endl;
 	tools::PrintMatrix(penaltyMatrix);
-	std::cout << maxPenalty.value << " " << maxPenalty.i << " " << maxPenalty.j << std::endl;
+	std::cout 
+		<< "value: " << maxPenalty.value 
+		<< "| i: " << maxPenalty.i 
+		<< "| j: " << maxPenalty.j << std::endl;
 	
 	auto newMtx = MatrixReduction(maxPenalty.i, maxPenalty.j, adjacencyMatrix);
+	std::cout << "FirstBranchMatrix:" << std::endl;
+	tools::PrintMatrix(newMtx);
 	auto newPath = path;
 	newPath.emplace_back(maxPenalty.i, maxPenalty.j);
+	std::cout << "NewEdge:" << GeometricGraph::Edge(maxPenalty.i, maxPenalty.j) << " Penalty: " << maxPenalty.value << std::endl;
+	std::cout << "<------------------------>" << std::endl;
 	FindHamiltonianCycle(newMtx, newPath, bestPath, record, bottomLimit);
 
 	newMtx = adjacencyMatrix;
 	newMtx[maxPenalty.i][maxPenalty.j] = std::numeric_limits<double>::max();
+	std::cout << "SecondBranchMatrix:" << std::endl;
+	tools::PrintMatrix(newMtx);
+	std::cout << "<-------------------------" << std::endl;
 	FindHamiltonianCycle(newMtx, path, bestPath, record, bottomLimit);
+}
+
+
+std::vector<GeometricGraph::Edge> GetOriginalCoordinates(
+    int n,
+    const std::vector<GeometricGraph::Edge>& steps
+) {
+    std::vector<int> row_map(n), col_map(n);
+    std::iota(row_map.begin(), row_map.end(), 0);
+    std::iota(col_map.begin(), col_map.end(), 0);
+
+    std::vector<std::pair<int, int>> result;
+    for (const auto& step : steps) {
+        int i = step.first;
+        int j = step.second;
+
+        if (i >= static_cast<int>(row_map.size()) || j >= static_cast<int>(col_map.size())) {
+            throw std::out_of_range("Index out of current matrix bounds");
+        }
+
+        result.emplace_back(row_map[i], col_map[j]);
+
+        row_map.erase(row_map.begin() + i);
+        col_map.erase(col_map.begin() + j);
+    }
+
+    return result;
 }

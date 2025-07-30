@@ -31,12 +31,20 @@ int main(int argc, char *argv[]) {
 //	tools::PrintArray(path);
 //	std::cout << "Time: " << time.ToSeconds() << "s" << std::endl;
 
-	std::vector<std::vector<int>> mtx = std::vector<std::vector<int>>{
-		{0, 100, 200, 1},
-		{100, 0, 300, 400},
-		{200, 300, 0, 500},
-		{1, 400, 500, 0}
+	std::vector<std::vector<int>> mtx{
+				{0, 8, 1, 0, 3, 0},
+				{8, 0, 6, 5, 0, 0},
+				{1, 6, 0, 4, 5, 0},
+				{0, 5, 4, 0, 6, 4},
+				{3, 0, 5, 6, 0, 7},
+				{0, 0, 0, 4, 7, 0},
 	};
+
+	// std::vector<std::vector<int>> mtx{
+	// 			{0, 1, 2},
+	// 			{1, 0, 3},
+	// 			{2, 3, 0},
+	// };
 	std::vector<int> path(mtx.size());
 	auto l = FindShortestPath(mtx, path);
 	std::transform(path.begin(), path.end(), path.begin(), [](auto v) {

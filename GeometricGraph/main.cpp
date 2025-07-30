@@ -25,6 +25,14 @@ int main(int argc, char **argv) {
 				{1, inf, 3},
 				{2, 3, inf}
 	};
+	GeometricGraph::AdjacencyMatrix mtx{
+				{inf, 8, 1, inf, 3, inf},
+				{8, inf, 6, 5, inf, inf},
+				{1, 6, inf, 4, 5, inf},
+				{inf, 5, 4, inf, 6, 4},
+				{3, inf, 5, 6, inf, 7},
+				{inf, inf, inf, 4, 7, inf},
+	};
 	tools::PrintMatrix(mtx);
 	auto path = GeometricGraph::HamiltonianCycle(mtx);
 	tools::PrintArray(path);

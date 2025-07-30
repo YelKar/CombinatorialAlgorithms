@@ -225,6 +225,10 @@ CombinatorialObjectsGeneration/1/2/CMakeFiles/TravelingSalesmanProblem.dir/main.
  /usr/include/c++/15.1.1/x86_64-pc-linux-gnu/bits/c++io.h \
  /usr/include/c++/15.1.1/bits/fstream.tcc /usr/include/c++/15.1.1/cstring \
  /usr/include/string.h /usr/include/strings.h \
+ /usr/include/c++/15.1.1/ranges /usr/include/c++/15.1.1/iterator \
+ /usr/include/c++/15.1.1/bits/stream_iterator.h \
+ /usr/include/c++/15.1.1/variant \
+ /usr/include/c++/15.1.1/bits/elements_of.h \
  /home/yel/Projects/CPP/CombinatorialAlgorithms/CombinatorialObjectsGeneration/1/2/TravelingSalesman.h \
  /home/yel/Projects/CPP/CombinatorialAlgorithms/CombinatorialObjectsGeneration/1/2/../1/Permutations.h \
  /usr/include/c++/15.1.1/numeric \
