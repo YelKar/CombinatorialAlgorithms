@@ -8,28 +8,28 @@
 bool ProcessArgs(int argc, char *argv[], int &countOfPoints, std::vector<std::vector<int>> &distanceMtx);
 
 int main(int argc, char *argv[]) {
-//	int countOfPoints = 0;
-//	std::vector<std::vector<int>> distanceMtx;
-//
-//	if (!ProcessArgs(argc, argv, countOfPoints, distanceMtx)) {
-//		return 1;
-//	}
-//
-//	std::cout << "Cities:" << std::endl;
-//	tools::PrintMatrix(distanceMtx);
-//
-//	std::vector<int> path(countOfPoints);
-//	std::iota(path.begin(), path.end(), 0);
-//
-//	int length;
-//	auto time = tools::Timer::Measure([&length, distanceMtx, &path] {
-//		length = FindShortestPath(distanceMtx, path);
-//	});
-//
-//	std::cout << "Path length: " << length << std::endl;
-//	std::cout << "path: ";
-//	tools::PrintArray(path);
-//	std::cout << "Time: " << time.ToSeconds() << "s" << std::endl;
+	//	int countOfPoints = 0;
+	//	std::vector<std::vector<int>> distanceMtx;
+	//
+	//	if (!ProcessArgs(argc, argv, countOfPoints, distanceMtx)) {
+	//		return 1;
+	//	}
+	//
+	//	std::cout << "Cities:" << std::endl;
+	//	tools::PrintMatrix(distanceMtx);
+	//
+	//	std::vector<int> path(countOfPoints);
+	//	std::iota(path.begin(), path.end(), 0);
+	//
+	//	int length;
+	//	auto time = tools::Timer::Measure([&length, distanceMtx, &path] {
+	//		length = FindShortestPath(distanceMtx, path);
+	//	});
+	//
+	//	std::cout << "Path length: " << length << std::endl;
+	//	std::cout << "path: ";
+	//	tools::PrintArray(path);
+	//	std::cout << "Time: " << time.ToSeconds() << "s" << std::endl;
 
 	std::vector<std::vector<int>> mtx{
 				{0, 8, 1, 0, 3, 0},

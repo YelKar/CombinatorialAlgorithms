@@ -6,22 +6,20 @@
 
 
 std::vector<double> FindMinRowsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
-	auto container = adjacencyMatrix | std::views::transform([] (const GeometricGraph::AdjacencyMatrixRow row) {
-		return std::ranges::min(row);
+	auto container = std::ranges::subrange(adjacencyMatrix.begin() + 1, adjacencyMatrix.end()) | std::views::transform([] (const GeometricGraph::AdjacencyMatrixRow row) {
+		return std::ranges::min(std::ranges::subrange(row.begin() + 1, row.end()));
 	});
 	return std::vector(std::begin(container), std::end(container));
 }
 
 std::vector<double> FindMinColumnsElements(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix) {
-	auto container = std::views::iota(0ul, adjacencyMatrix.size()) | std::views::transform([adjacencyMatrix] (int columnNum) {
-		return std::ranges::min(
-			adjacencyMatrix
-			| std::views::transform([columnNum] (const GeometricGraph::AdjacencyMatrixRow& row) {
-				return row[columnNum];
-			})
-		);
-	});
-	return std::vector<double>(std::begin(container), std::end(container));
+	std::vector<double> container(adjacencyMatrix.size() - 1, GeometricGraph::INF);
+	for (int i = 1; i < adjacencyMatrix.size(); ++i) {
+		for (int j = 1; j < adjacencyMatrix.size(); ++j) {
+			container[j - 1] = std::min(container[j - 1], adjacencyMatrix[i][j]);
+		}
+	}
+	return container;
 }
 
 template <typename Container>
@@ -39,13 +37,17 @@ GeometricGraph::AdjacencyMatrix GetPenaltyMatrix(
 		adjacencyMatrix.size(),
 		GeometricGraph::AdjacencyMatrixRow(
 			adjacencyMatrix.size(),
-			std::numeric_limits<double>::max()
+			GeometricGraph::INF
 		)
 	);
-	for (int i = 0; i < adjacencyMatrix.size(); ++i) {
-		for (int j = 0; j < adjacencyMatrix.size(); ++j) {
+	for (int i = 1; i < adjacencyMatrix.size(); ++i) {
+		penaltyMatrix[i][0] = i - 1;
+		penaltyMatrix[0][i] = i - 1;
+	}
+	for (int i = 1; i < adjacencyMatrix.size(); ++i) {
+		for (int j = 1; j < adjacencyMatrix.size(); ++j) {
 			if (adjacencyMatrix[i][j] == 0) {
-				penaltyMatrix[i][j] = minRowsElements[i] + minColumnsElements[j];
+				penaltyMatrix[i][j] = minRowsElements[i - 1] + minColumnsElements[j - 1];
 			}
 		}
 	}
@@ -61,13 +63,13 @@ struct Penalty {
 };
 
 Penalty MaxOfMatrix(const GeometricGraph::AdjacencyMatrix& matrix) {
-	Penalty result{matrix[0][0], 0, 0};
-	for (int i = 0; i < matrix.size(); i++) {
-		for (int j = 0; j < matrix.size(); j++) {
-			if (matrix[i][j] > result.value && matrix[i][j] != std::numeric_limits<double>::max() || result.value == std::numeric_limits<double>::max()) {
+	Penalty result{matrix[1][1], 0, 0};
+	for (int i = 1; i < matrix.size(); i++) {
+		for (int j = 1; j < matrix.size(); j++) {
+			if (matrix[i][j] > result.value && matrix[i][j] != GeometricGraph::INF || result.value == GeometricGraph::INF) {
 				result = {
 					matrix[i][j],
-					i, j,
+					i - 1, j - 1,
 				};
 			}
 		}
@@ -76,31 +78,39 @@ Penalty MaxOfMatrix(const GeometricGraph::AdjacencyMatrix& matrix) {
 }
 
 GeometricGraph::AdjacencyMatrix MatrixReduction(int i, int j, const GeometricGraph::AdjacencyMatrix& adjacencyMtx) {
-	GeometricGraph::AdjacencyMatrix minor;
-    minor.reserve(adjacencyMtx.size() - 1);
-    
-    for (int row = 0; row < adjacencyMtx.size(); ++row) {
-        if (row == i) continue;
-        
-        const auto& originalRow = adjacencyMtx[row];
-        auto& newRow = minor.emplace_back();
-        newRow.reserve(originalRow.size() - 1);
-        
-        for (int col = 0; col < originalRow.size(); ++col) {
-            if (col == j) continue;
-			if (col == i && row == j) {
-				newRow.push_back(std::numeric_limits<double>::max());
-			} else {
-            	newRow.push_back(originalRow[col]);
+	// std::cout << "MatrixReduction(" << i << ", " << j << ") => " << adjacencyMtx[i + 1][j + 1] << std::endl;
+	// tools::PrintMatrix(adjacencyMtx);
+
+	GeometricGraph::AdjacencyMatrix minor = adjacencyMtx;
+	auto removeI = minor[i + 1][0];
+	auto removeJ = minor[0][j + 1];
+
+	for (int i = 1; i < minor.size(); i++) {
+		for (int j = 1; j < minor[i].size(); j++) {
+			if (removeI == minor[0][j] && removeJ == minor[i][0]) {
+				minor[i][j] = GeometricGraph::INF;
 			}
-        }
-    }
+		}
+	}
+
+    minor.erase(minor.begin() + i + 1);
+	for (auto& row : minor) {
+		row.erase(row.begin() + j + 1);
+	}
+    
+	// std::cout << "Matrix Reduction Result:" << std::endl;
+	// tools::PrintMatrix(minor);
     
     return minor;
 }
 
+std::vector<GeometricGraph::Edge> GetOriginalCoordinates(
+    int n,
+    const std::vector<GeometricGraph::Edge>& steps
+);
+
 void FindHamiltonianCycle(
-	GeometricGraph::AdjacencyMatrix adjacencyMatrix,
+	GeometricGraph::AdjacencyMatrix adjacencyMatrixWithAxis,
 	const std::vector<GeometricGraph::Edge>& path,
 	std::vector<GeometricGraph::Edge>& bestPath,
 	double& record,
@@ -109,45 +119,59 @@ void FindHamiltonianCycle(
 {
 	// std::cout << "------------------------>" << std::endl;
 	// std::cout << "GOT:" << std::endl;
-	// tools::PrintMatrix(adjacencyMatrix);
-	// std::cout << "BottomLimit: " << bottomLimit << std::endl;
+	// tools::PrintMatrix(adjacencyMatrixWithAxis);
+	// std::cout << "BottomLimit: " << bottomLimit << " Record: " << record << std::endl;
+	// std::cout << "Path: ";
+	// tools::PrintArray(path);
 	// std::cout << "\\/\\/\\/\\/\\/\\/" << std::endl;
-	if (adjacencyMatrix.size() < 2) {
-		if (!adjacencyMatrix.empty() && !adjacencyMatrix[0].empty() && bottomLimit < record) {
+	if (adjacencyMatrixWithAxis.size() < 3) {
+		if (bottomLimit < record && adjacencyMatrixWithAxis.size() == 2 && adjacencyMatrixWithAxis[1][1] != GeometricGraph::INF) {
 			record = bottomLimit;
 			bestPath = path;
-			if (adjacencyMatrix[0][0] != std::numeric_limits<double>::max()) {
-				bestPath.emplace_back(0, 0);
-			}
+			bestPath.push_back({adjacencyMatrixWithAxis[1][0], adjacencyMatrixWithAxis[0][1]});
+			record += adjacencyMatrixWithAxis[1][1];
 			// std::cout << "New record: " << record << std::endl;
 			// std::cout << "New path: " << std::endl;
 			// tools::PrintArray(bestPath);
 		}
 		return;
 	}
-	auto minRowsElements = FindMinRowsElements(adjacencyMatrix);
-	for (auto [row, minElement] : std::views::zip(adjacencyMatrix, minRowsElements)) {
-		for (auto &element : row) {
-			if (element != std::numeric_limits<double>::max())
-				element -= minElement;
+	auto minRowsElements = FindMinRowsElements(adjacencyMatrixWithAxis);
+	for (int i = 1; i < adjacencyMatrixWithAxis.size(); ++i) {
+		for (int j = 1; j < adjacencyMatrixWithAxis[i].size(); ++j) {
+			if (adjacencyMatrixWithAxis[i][j] != GeometricGraph::INF) {
+				adjacencyMatrixWithAxis[i][j] -= minRowsElements[i - 1];
+			}
 		}
 	}
 	// std::cout << "RowSubtracted:" << std::endl;
-	// tools::PrintMatrix(adjacencyMatrix);
+	// tools::PrintMatrix(adjacencyMatrixWithAxis);
 	// std::cout << "MinRowsElements:" << std::endl;
 	// tools::PrintArray(minRowsElements);
-	auto minColumnsElements = FindMinColumnsElements(adjacencyMatrix);
-	for (auto [columnNum, minElement] : std::views::zip(std::views::iota(0ul, adjacencyMatrix.size()), minColumnsElements)) {
-		for (auto &row : adjacencyMatrix) {
-			if (row[columnNum] != std::numeric_limits<double>::max())
-				row[columnNum] -= minElement;
+	auto minColumnsElements = FindMinColumnsElements(adjacencyMatrixWithAxis);
+	for (int i = 1; i < adjacencyMatrixWithAxis.size(); ++i) {
+		for (int j = 1; j < adjacencyMatrixWithAxis[i].size(); ++j) {
+			if (adjacencyMatrixWithAxis[i][j] != GeometricGraph::INF) {
+				adjacencyMatrixWithAxis[i][j] -= minColumnsElements[j - 1];
+			}
 		}
 	}
 
 	// std::cout << "ColSubtracted:" << std::endl;
-	// tools::PrintMatrix(adjacencyMatrix);
+	// tools::PrintMatrix(adjacencyMatrixWithAxis);
 	// std::cout << "MinColumnsElements:" << std::endl;
 	// tools::PrintArray(minColumnsElements);
+
+	if (
+		std::all_of(minColumnsElements.begin(), minColumnsElements.end(), [] (auto val) {
+			return val == GeometricGraph::INF;
+		})
+		|| std::all_of(minRowsElements.begin(), minRowsElements.end(), [] (auto val) {
+			return val == GeometricGraph::INF;
+		})
+	) {
+		return;
+	}
 
 	bottomLimit +=
 		+ Sum(minRowsElements)
@@ -158,26 +182,26 @@ void FindHamiltonianCycle(
 		return;
 	}
 
-	auto penaltyMatrix = GetPenaltyMatrix(adjacencyMatrix, minRowsElements, minColumnsElements);
+	auto penaltyMatrix = GetPenaltyMatrix(adjacencyMatrixWithAxis, minRowsElements, minColumnsElements);
 	auto maxPenalty = MaxOfMatrix(penaltyMatrix);
 	// std::cout << "PenaltyMatrix:" << std::endl;
 	// tools::PrintMatrix(penaltyMatrix);
 	// std::cout 
 	// 	<< "value: " << maxPenalty.value 
-	// 	<< "| i: " << maxPenalty.i 
+	// 	<< "| i: " << maxPenalty.i
 	// 	<< "| j: " << maxPenalty.j << std::endl;
 	
-	auto newMtx = MatrixReduction(maxPenalty.i, maxPenalty.j, adjacencyMatrix);
+	auto newMtx = MatrixReduction(maxPenalty.i, maxPenalty.j, adjacencyMatrixWithAxis);
 	// std::cout << "FirstBranchMatrix:" << std::endl;
-	tools::PrintMatrix(newMtx);
+	// tools::PrintMatrix(newMtx);
 	auto newPath = path;
-	newPath.emplace_back(maxPenalty.i, maxPenalty.j);
-	// std::cout << "NewEdge:" << GeometricGraph::Edge(maxPenalty.i, maxPenalty.j) << " Penalty: " << maxPenalty.value << std::endl;
+	newPath.emplace_back(adjacencyMatrixWithAxis[maxPenalty.i + 1][0], adjacencyMatrixWithAxis[0][maxPenalty.j + 1]);
+	// std::cout << "NewEdge:" << GeometricGraph::Edge(adjacencyMatrixWithAxis[maxPenalty.i + 1][0], adjacencyMatrixWithAxis[0][maxPenalty.j + 1]) << " Penalty: " << maxPenalty.value << std::endl;
 	// std::cout << "<------------------------>" << std::endl;
 	FindHamiltonianCycle(newMtx, newPath, bestPath, record, bottomLimit);
 
-	newMtx = adjacencyMatrix;
-	newMtx[maxPenalty.i][maxPenalty.j] = std::numeric_limits<double>::max();
+	newMtx = adjacencyMatrixWithAxis;
+	newMtx[maxPenalty.i + 1][maxPenalty.j + 1] = GeometricGraph::INF;
 	// std::cout << "SecondBranchMatrix:" << std::endl;
 	// tools::PrintMatrix(newMtx);
 	// std::cout << "<-------------------------" << std::endl;

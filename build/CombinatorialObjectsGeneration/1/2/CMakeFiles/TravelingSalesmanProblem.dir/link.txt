@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/TravelingSalesmanProblem.dir/link.d CMakeFiles/TravelingSalesmanProblem.dir/main.cpp.o -o TravelingSalesmanProblem

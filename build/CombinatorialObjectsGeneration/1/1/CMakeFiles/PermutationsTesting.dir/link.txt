@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/PermutationsTesting.dir/link.d CMakeFiles/PermutationsTesting.dir/Testing.cpp.o -o PermutationsTesting  ../../../lib/libgtest_main.a ../../../lib/libgtest.a

@@ -2,9 +2,11 @@
 #include <vector>
 #include <memory>
 #include <set>
+#include <limits>
 
 class GeometricGraph {
 public:
+	static constexpr double INF = std::numeric_limits<double>::infinity();
 	struct Vertex;
 	using AdjacencyMatrixRow = std::vector<double>;
 	using AdjacencyMatrix = std::vector<AdjacencyMatrixRow>;
@@ -22,6 +24,7 @@ public:
 	void Validate() const;
 	[[nodiscard]] bool HasEdge(int v1, int v2) const;
 	[[nodiscard]] double GetLength(int v1, int v2) const;
+	static double GetLength(const AdjacencyMatrix& mtx, const std::vector<Edge>& path);
 	[[nodiscard]] std::vector<std::vector<double>> GetAdjacencyMatrix() const;
 	[[nodiscard]] std::vector<Edge> HamiltonianCycle() const;
 	static std::vector<Edge> HamiltonianCycle(const AdjacencyMatrix&);

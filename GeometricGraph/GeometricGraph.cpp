@@ -164,11 +164,23 @@ double GeometricGraph::GetLength(int v1, int v2) const
 	throw std::invalid_argument(std::format("Vertices {} and {} are not neighbors", v1, v2));
 }
 
+double GeometricGraph::GetLength(const GeometricGraph::AdjacencyMatrix& mtx, const std::vector<Edge>& path)
+{
+	double length = 0;
+	for (const auto& edge : path) {
+		if (edge.first >= mtx.size() || edge.second >= mtx[edge.first].size()) {
+			throw std::invalid_argument("Edge [" + std::to_string(edge.first) + ";" + std::to_string(edge.second) + "] out of range");
+		}
+		length += mtx[edge.first][edge.second];
+	}
+	return length;
+}
+
 GeometricGraph::AdjacencyMatrix GeometricGraph::GetAdjacencyMatrix() const
 {
 	std::vector<std::vector<double>> matrix(vertices.size());
 	for (int row = 0; row < vertices.size(); ++row) {
-		matrix[row].resize(vertices.size(), std::numeric_limits<double>::max());
+		matrix[row].resize(vertices.size(), GeometricGraph::INF);
 		for (int vertex = 0; vertex < vertices.size(); ++vertex) {
 			if (HasEdge(row, vertex)) {
 				matrix[row][vertex] = GetLength(row, vertex);
@@ -187,11 +199,19 @@ std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle() const
 
 std::vector<GeometricGraph::Edge> GeometricGraph::HamiltonianCycle(const GeometricGraph::AdjacencyMatrix& adjacencyMatrix)
 {
-	double record = std::numeric_limits<double>::max();
+	double record = GeometricGraph::INF;
 	std::vector<Edge> path;
 	std::vector<Edge> bestPath;
-	FindHamiltonianCycle(adjacencyMatrix, path, bestPath, record);
-	return GetOriginalCoordinates(adjacencyMatrix.size(), bestPath);
+	GeometricGraph::AdjacencyMatrix adjacencyMatrixWithAxis = adjacencyMatrix;
+	adjacencyMatrixWithAxis.insert(adjacencyMatrixWithAxis.begin(), std::vector<double>(adjacencyMatrixWithAxis.size() + 1, -1));
+	for (int i = 1; i < adjacencyMatrixWithAxis.size(); i++) {
+		adjacencyMatrixWithAxis[i].insert(adjacencyMatrixWithAxis[i].begin(), i - 1);
+		adjacencyMatrixWithAxis[0][i] = i - 1;
+	}
+	FindHamiltonianCycle(adjacencyMatrixWithAxis, path, bestPath, record);
+	// tools::PrintArray(bestPath);
+	// std::cout << "Record: " << record << " Length: " << GeometricGraph::GetLength(adjacencyMatrix, bestPath) << std::endl;
+	return bestPath;
 }
 
 

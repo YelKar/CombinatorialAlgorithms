@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/Combinations.dir/link.d CMakeFiles/Combinations.dir/main.cpp.o -o Combinations

@@ -1,1 +1,0 @@
-/usr/bin/g++ -g -Wl,--dependency-file=CMakeFiles/TravelingSalesmanProblemTesting.dir/link.d CMakeFiles/TravelingSalesmanProblemTesting.dir/Testing.cpp.o -o TravelingSalesmanProblemTesting  ../../../lib/libgtest_main.a ../../../lib/libgtest.a
