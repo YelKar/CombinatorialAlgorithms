@@ -16,4 +16,11 @@ add_executable(
 )
 target_link_libraries(ConnectionComponentTesting gtest_main)
 
+add_executable(
+    CondensationTesting
+        CondensationTesting.cpp
+        Digraph.cpp
+)
+target_link_libraries(CondensationTesting gtest_main)
+
 include_directories(../tools)

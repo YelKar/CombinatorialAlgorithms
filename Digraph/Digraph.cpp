@@ -32,6 +32,14 @@ void Digraph::addEdge(const DigraphEdge& edge) {
     addEdge(edge.u, edge.v);
 }
 
+void Digraph::addNode(IdType nodeId) {
+    auto it = nodes.find(nodeId);
+	if (it == nodes.end()) {
+		nodes[nodeId].id = nodeId;
+		nodes[nodeId].neighbors = {};
+	}
+}
+
 void Digraph::operator+=(const DigraphEdge& edge) {
     addEdge(edge.u, edge.v);
 }
@@ -183,6 +191,10 @@ Digraph Digraph::Condensation(const Digraph& graph, const std::vector<ConnectedC
 
 	Digraph result;
 
+    for (const auto& [_, componentId] : nodeToComponent) {
+        result.addNode(componentId);
+    }
+
 	for (int i = 0; i < static_cast<int>(components.size()); ++i) {
 		for (IdType u : components[i]) {
 			const auto& neighbors = graph[u];
@@ -208,6 +220,13 @@ Digraph Digraph::Condensation(const Digraph& graph) {
 
 Digraph Digraph::Condensation() const {
     return Condensation(*this);
+}
+
+bool Digraph::operator==(const Digraph& graph) const {
+    return nodes.size() == graph.nodes.size() && std::all_of(nodes.begin(), nodes.end(), [graph] (auto nodePair) {
+        const auto [key, node] = nodePair;
+        return graph.getNeighbors(key) == node.neighbors;
+    });
 }
 
 std::ostream& operator<<(std::ostream& os, const DigraphEdge& edge)  {

@@ -18,6 +18,7 @@ std::ostream& operator<<(std::ostream& os, const TimeMark& mark);
 struct DigraphEdge {
 	IdType u = -1;
 	IdType v = -1;
+	auto operator<=>(const DigraphEdge&) const = default;
 };
 std::ostream& operator<<(std::ostream& os, const DigraphEdge& edge);
 
@@ -35,6 +36,7 @@ public:
 	Digraph(const std::vector<DigraphEdge>& edges);
 	void addEdge(IdType u, IdType v);
 	void addEdge(const DigraphEdge& edge);
+	void addNode(IdType);
 	void operator+=(const DigraphEdge& edge);
 	bool isConnected(IdType u, IdType v) const;
 	bool operator()(IdType u, IdType v) const;
@@ -54,6 +56,7 @@ public:
 	static Digraph Condensation(const Digraph& graph, const std::vector<ConnectedComponent>& components);
 	static Digraph Condensation(const Digraph& graph);
 	Digraph Condensation() const;
+	bool operator==(const Digraph&) const;
 private:
 	std::unordered_map<IdType, DigraphNode> nodes;
 };
