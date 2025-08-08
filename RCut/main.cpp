@@ -16,9 +16,6 @@ int main(int argc, char **argv) {
 		{11, {30, 32}},
 	};
 
-	std::cout << "START" << std::endl;
-	tools::PrintArray(space);
-	std::cout << "OUT" << std::endl;
 	auto tree = RCut(space);
 	PrintHSTTree(tree);
 	return 0;

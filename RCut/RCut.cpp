@@ -54,11 +54,9 @@ void Clusterization(Cluster& cluster) {
 
 double GetMetricDiameter(const MetricSpace& points) {
 	double maxDistance = 0;
-	std::cout << "DIAMETER" << std::endl;
 	for (int i = 0; i < points.size() - 1; ++i) {
 		for (int j = i + 1; j < points.size(); ++j) {
 			maxDistance = std::max(maxDistance, std::hypot(points[i].pos.x - points[j].pos.x, points[i].pos.y - points[j].pos.y));
-			std::cout << points[i] << " " << points[j] << " " << std::hypot(points[i].pos.x - points[j].pos.x, points[i].pos.y - points[j].pos.y) << std::endl;
 		}
 	}
 	return maxDistance;
@@ -88,7 +86,6 @@ HSTTreeNode RCut(const MetricSpace& points, double radiusCoefficient) {
 		.points = points,
 	};
 	Clusterization(rootCluster);
-	std::cout << "END" << std::endl;
 	return ClusterToTree(rootCluster);
 }
 
